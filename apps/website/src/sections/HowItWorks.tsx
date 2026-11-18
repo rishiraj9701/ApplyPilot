@@ -8,12 +8,11 @@ import {
   Zap,
   CheckCircle2,
   MousePointerClick,
-  ArrowRight,
   Clock,
-  Sparkles,
+  ArrowRight,
+  ShieldCheck,
 } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader';
-import { FadeIn } from '../animations/MotionPrims';
 
 interface WorkflowStep {
   number: string;
@@ -22,72 +21,72 @@ interface WorkflowStep {
   description: string;
   icon: any;
   timeEstimate: string;
-  detail: string;
+  technicalGuarantee: string;
 }
 
 const WORKFLOW_STEPS: WorkflowStep[] = [
   {
     number: '01',
-    title: 'Download ApplyPilot',
-    subtitle: 'GitHub Release Archive',
-    description: 'Get the latest release ZIP from the official repository and load it as an unpacked extension in any Chromium browser.',
+    title: 'Download Release ZIP',
+    subtitle: 'GitHub Releases Channel',
+    description: 'Download the unpacked extension archive directly from GitHub Releases without requiring Chrome Web Store telemetry.',
     icon: Download,
     timeEstimate: '30 seconds',
-    detail: 'Zero store sign-ups or telemetry trackers installed.',
+    technicalGuarantee: 'Zero tracking IDs installed',
   },
   {
     number: '02',
-    title: 'Import Your Resume',
-    subtitle: 'Local In-Memory Parsing',
-    description: 'Drop your PDF or DOCX file. WebAssembly parses work history, technical skills, and credentials directly in your tab.',
+    title: 'Import Candidate Resume',
+    subtitle: 'Local In-Memory Extraction',
+    description: 'Drop your PDF or DOCX file. Client-side WebAssembly extractors parse credentials directly inside your browser tab.',
     icon: FileText,
     timeEstimate: '3 seconds',
-    detail: 'Never uploaded to any server or cloud API.',
+    technicalGuarantee: 'No cloud server uploads',
   },
   {
     number: '03',
-    title: 'Review Local Profile',
-    subtitle: 'Configure Variant Personas',
-    description: 'Fine-tune your personal information, links, and pre-saved answers for recurring questions (visas, salary, notice period).',
+    title: 'Configure Profile Variants',
+    subtitle: 'Local chrome.storage.local',
+    description: 'Review your parsed career history, verify contact links, and save recurring responses for visas, notice periods, and salary.',
     icon: UserCheck2,
-    timeEstimate: '2 minutes once',
-    detail: 'Persists securely in chrome.storage.local.',
+    timeEstimate: '2 minutes (once)',
+    technicalGuarantee: 'Persists in local browser storage',
   },
   {
     number: '04',
-    title: 'Open Job Application',
-    subtitle: 'Automatic Signature Match',
-    description: 'Browse to any job opening on Greenhouse, Lever, Ashby, or Workday. The extension activates when an ATS form is recognized.',
+    title: 'Navigate to Job Opening',
+    subtitle: 'Active ATS Heuristic Probe',
+    description: 'Browse to any open role on Greenhouse, Lever, Ashby, or Workday. ApplyPilot recognizes form containers non-intrusively.',
     icon: Globe2,
     timeEstimate: 'Instant',
-    detail: 'Runs non-intrusively in the background until needed.',
+    technicalGuarantee: 'Passive DOM observation only',
   },
   {
     number: '05',
-    title: 'Autofill Form Fields',
-    subtitle: '1-Click Precision Injection',
-    description: 'ApplyPilot populates contact fields, work history, links, and screening responses with proper DOM change events.',
+    title: 'Execute Field Autofill',
+    subtitle: 'Synthetic Event Dispatch',
+    description: 'ApplyPilot populates inputs with verified profile values and dispatches native change events so modern SPAs register the updates.',
     icon: Zap,
-    timeEstimate: '< 150 ms',
-    detail: 'Supports single-page apps like React and Vue.',
+    timeEstimate: '< 150ms',
+    technicalGuarantee: 'React & Vue state compatible',
   },
   {
     number: '06',
-    title: 'Review AI Answers',
-    subtitle: 'First-Person Fact Grounding',
-    description: 'Inspect drafted answers to open-ended questions. Edit or regenerate using local Ollama or your own Gemini key.',
+    title: 'Review Grounded AI Answers',
+    subtitle: 'Local Ollama / Gemini BYOK',
+    description: 'Inspect drafted answers to open-ended prompts like "Why this role?". Refine or regenerate using your local LLM model.',
     icon: CheckCircle2,
     timeEstimate: '10–20 seconds',
-    detail: 'Grounded strictly in your actual employment track record.',
+    technicalGuarantee: 'Zero unverified hallucinations',
   },
   {
     number: '07',
     title: 'Submit Manually',
-    subtitle: 'Human-in-the-Loop Always',
-    description: 'Verify attachments, answer any final CAPTCHA, and click Submit. You retain 100% control over every single submission.',
+    subtitle: 'Human in the Loop Guarantee',
+    description: 'Verify attachments, solve any CAPTCHA, and click Submit. ApplyPilot has no automated submit scripts, keeping you in complete control.',
     icon: MousePointerClick,
     timeEstimate: 'Final review',
-    detail: 'No accidental submissions or algorithmic bans.',
+    technicalGuarantee: 'Zero automated submissions',
   },
 ];
 
@@ -95,17 +94,17 @@ export function HowItWorks() {
   const [activeStep, setActiveStep] = useState<number>(0);
 
   return (
-    <section id="how-it-works" className="py-20 sm:py-28 bg-[#090a0f] relative overflow-hidden">
+    <section id="how-it-works" className="py-24 sm:py-32 bg-[#090b10] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeader
-          badge="WORKFLOW"
+          badge="EXECUTION LIFECYCLE"
           badgeIcon={<Clock className="w-3.5 h-3.5" />}
           title="From Download to Submission in Seven Steps"
-          subtitle="A predictable, transparent workflow that prioritizes your autonomy, security, and time."
+          subtitle="A predictable, transparent pipeline designed to save you hours while keeping you in complete control of every application."
         />
 
-        {/* Interactive Timeline Flow */}
-        <div className="max-w-5xl mx-auto space-y-4">
+        {/* Chronological Vertical Flow */}
+        <div className="max-w-4xl mx-auto space-y-4">
           {WORKFLOW_STEPS.map((step, idx) => {
             const Icon = step.icon;
             const isSelected = activeStep === idx;
@@ -114,19 +113,19 @@ export function HowItWorks() {
               <div
                 key={step.number}
                 onClick={() => setActiveStep(idx)}
-                className={`group p-5 rounded-xl border transition-all cursor-pointer ${
+                className={`group p-5 sm:p-6 rounded-2xl border transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#0c0e14] border-emerald-500/50 shadow-xl shadow-emerald-950/20'
-                    : 'bg-[#0c0e14]/50 border-slate-800/80 hover:border-slate-700 hover:bg-[#0c0e14]/80'
+                    ? 'bg-[#0c0f17] border-emerald-500/50 shadow-xl shadow-emerald-950/25 ring-1 ring-emerald-500/30'
+                    : 'bg-[#0c0f17]/40 border-slate-800/80 hover:border-slate-700 hover:bg-[#0c0f17]/70'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-start sm:items-center gap-4">
                     {/* Number Badge */}
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center font-mono text-sm font-bold flex-shrink-0 transition-colors ${
+                      className={`w-11 h-11 rounded-2xl flex items-center justify-center font-mono text-sm font-bold flex-shrink-0 transition-all ${
                         isSelected
-                          ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                          ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/30'
                           : 'bg-slate-900 border border-slate-800 text-slate-400 group-hover:text-emerald-400'
                       }`}
                     >
@@ -138,7 +137,7 @@ export function HowItWorks() {
                         <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
                           {step.title}
                         </h3>
-                        <span className="text-[11px] font-mono text-slate-400 hidden md:inline">
+                        <span className="text-[11px] font-mono text-slate-500 hidden sm:inline">
                           • {step.subtitle}
                         </span>
                       </div>
@@ -148,13 +147,13 @@ export function HowItWorks() {
                     </div>
                   </div>
 
-                  {/* Time Badge and Indicator */}
-                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800/60">
-                    <span className="text-xs font-mono text-emerald-400 px-2.5 py-1 rounded-md bg-emerald-950/40 border border-emerald-800/40">
+                  {/* Guarantee & Time pill */}
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800/60 font-mono text-xs">
+                    <span className="text-emerald-400 px-2.5 py-1 rounded-md bg-emerald-950/40 border border-emerald-800/40">
                       {step.timeEstimate}
                     </span>
-                    <span className="text-[11px] font-mono text-slate-400 mt-1">
-                      {step.detail}
+                    <span className="text-[10px] text-slate-500 mt-1">
+                      {step.technicalGuarantee}
                     </span>
                   </div>
                 </div>

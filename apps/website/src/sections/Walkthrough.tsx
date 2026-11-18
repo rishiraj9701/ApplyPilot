@@ -13,249 +13,326 @@ import {
   Pause,
   Check,
   Layers,
-  ArrowRight,
   ShieldAlert,
+  ArrowRight,
+  Terminal,
+  Cpu,
+  Sparkles,
 } from 'lucide-react';
 import { SectionHeader } from '../components/SectionHeader';
-import { FadeIn } from '../animations/MotionPrims';
+import { FadeIn, StreamingText } from '../animations/MotionPrims';
 
-interface StepData {
+interface WalkthroughStage {
   step: number;
   id: string;
   title: string;
-  shortDesc: string;
-  fullDesc: string;
+  tagline: string;
+  description: string;
   icon: any;
-  techBadge: string;
-  previewTitle: string;
-  previewContent: {
-    statusBadge: string;
-    details: Array<{ label: string; value: string; isHighlight?: boolean }>;
-    codePreview?: string;
-    actionLabel?: string;
+  pillBadge: string;
+  telemetry: {
+    runtime: string;
+    target: string;
+    latency: string;
+    status: string;
   };
+  mockInterface: React.ReactNode;
 }
-
-const STEPS: StepData[] = [
-  {
-    step: 1,
-    id: 'import',
-    title: 'Import Resume',
-    shortDesc: 'Client-side PDF / DOCX parse',
-    fullDesc:
-      'Drop your existing resume directly into ApplyPilot. The file is parsed strictly inside your browser tab using WebAssembly-based PDF text extractors. Zero files are ever transmitted to a cloud server.',
-    icon: FileUp,
-    techBadge: 'WASM PDF EXTRACTOR',
-    previewTitle: 'Local File Importer',
-    previewContent: {
-      statusBadge: '100% Client-Side Processing',
-      details: [
-        { label: 'Selected File', value: 'Sarah_Chen_Staff_Engineer_2026.pdf' },
-        { label: 'File Size', value: '142 KB (Local memory)' },
-        { label: 'Network Destination', value: 'None (Offline Web Worker)' },
-        { label: 'Extraction Mode', value: 'Structured text & semantic sectioning' },
-      ],
-      actionLabel: 'Extracting profile blocks...',
-    },
-  },
-  {
-    step: 2,
-    id: 'extract',
-    title: 'Extract Profile',
-    shortDesc: 'Structured local candidate schema',
-    fullDesc:
-      'ApplyPilot categorizes your experience, education, key metrics, technical skills, and links into a queryable local candidate profile. You can tweak, update, or create multiple role-specific variants anytime.',
-    icon: FileCode2,
-    techBadge: 'CHROME.STORAGE.LOCAL',
-    previewTitle: 'Local Candidate Schema',
-    previewContent: {
-      statusBadge: 'Saved to chrome.storage.local',
-      details: [
-        { label: 'Identified Roles', value: '3 Companies (FinScale, CloudCore, HyperDev)' },
-        { label: 'Verified Skills', value: 'TypeScript, Go, React, Distributed Systems, Kubernetes' },
-        { label: 'Portfolio Repos', value: 'github.com/sarahchen-dev (14 public repos)' },
-        { label: 'Candidate Variants', value: 'Primary, Infra-Lead, FullStack' },
-      ],
-      codePreview: `{
-  "candidate": "Sarah Chen",
-  "years_exp": 6,
-  "skills": ["Distributed Systems", "TypeScript", "React"],
-  "variant": "Infrastructure Lead"
-}`,
-    },
-  },
-  {
-    step: 3,
-    id: 'detect',
-    title: 'Detect ATS Platform',
-    shortDesc: 'Greenhouse, Lever, Ashby, Workday',
-    fullDesc:
-      'When you navigate to a job opening, the extension inspects page signatures, DOM element patterns, and URL patterns to identify the underlying Applicant Tracking System and its input field hierarchy.',
-    icon: Scan,
-    techBadge: 'DOM PATTERN MATCHER',
-    previewTitle: 'ATS Detection Engine',
-    previewContent: {
-      statusBadge: 'Greenhouse.io Signature Verified',
-      details: [
-        { label: 'Active Domain', value: 'boards.greenhouse.io' },
-        { label: 'Detected ATS', value: 'Greenhouse Careers v2.4' },
-        { label: 'Form Elements', value: '18 total inputs (14 standard, 4 custom)' },
-        { label: 'Compatibility', value: 'Full field mapping available' },
-      ],
-      actionLabel: 'Ready for deterministic injection',
-    },
-  },
-  {
-    step: 4,
-    id: 'populate',
-    title: 'Populate Fields',
-    shortDesc: 'Simulated human input dispatch',
-    fullDesc:
-      'ApplyPilot matches and fills form fields: personal information, work authorizations, education dates, and profile links. It fires synthetic input, change, and blur events so modern single-page frameworks recognize the updates.',
-    icon: Zap,
-    techBadge: 'SYNTHETIC EVENT DISPATCH',
-    previewTitle: 'Autofill Execution Monitor',
-    previewContent: {
-      statusBadge: '14 Fields Mapped & Populated',
-      details: [
-        { label: 'Name & Contact', value: 'Sarah Chen / sarah.chen@example.dev', isHighlight: true },
-        { label: 'URLs & Portfolios', value: 'LinkedIn, GitHub, Portfolio populated', isHighlight: true },
-        { label: 'Work Eligibility', value: 'Yes (US Citizen, No sponsorship needed)', isHighlight: true },
-        { label: 'Event Simulation', value: 'Dispatched InputEvent & CustomEvent ("change")' },
-      ],
-      actionLabel: 'Autofill completed in 84ms',
-    },
-  },
-  {
-    step: 5,
-    id: 'generate',
-    title: 'Generate AI Answers',
-    shortDesc: 'Tailored first-person drafts',
-    fullDesc:
-      'For open-ended questions like "Describe a challenging distributed systems incident you resolved", ApplyPilot synthesizes a concise, compelling answer strictly from your real profile achievements, using Ollama locally or Gemini.',
-    icon: Bot,
-    techBadge: 'GROUNDED CONTEXT PROMPT',
-    previewTitle: 'AI Screening Synthesis',
-    previewContent: {
-      statusBadge: 'Synthesized via Ollama (mistral:latest)',
-      details: [
-        { label: 'Prompt Target', value: '"Describe your experience with high-load telemetry."' },
-        { label: 'Context Source', value: 'Extracted from FinScale employment history block' },
-        { label: 'Drafted Output', value: '"At FinScale, I scaled telemetry ingestion to 120k events/sec using Kafka and ClickHouse, reducing p99 latency by 42%."', isHighlight: true },
-        { label: 'Hallucination Check', value: 'Grounded: 0 unverified claims detected' },
-      ],
-      actionLabel: 'Generated in 1.4s (Offline local inference)',
-    },
-  },
-  {
-    step: 6,
-    id: 'review',
-    title: 'Review & Submit',
-    shortDesc: 'Strict human-in-the-loop control',
-    fullDesc:
-      'ApplyPilot never submits an application automatically. You inspect all auto-filled inputs, review and edit generated text, attach files, solve any CAPTCHAs, and click the final submit button yourself.',
-    icon: UserCheck,
-    techBadge: 'ZERO AUTO-SUBMISSION',
-    previewTitle: 'Human Verification Gate',
-    previewContent: {
-      statusBadge: 'Awaiting User Confirmation',
-      details: [
-        { label: 'Pre-filled Inputs', value: 'Reviewed by candidate' },
-        { label: 'AI Responses', value: 'Inspected and customized' },
-        { label: 'Submission Method', value: 'Manual user click only' },
-        { label: 'Architecture Rule', value: 'No programmatic submit trigger exists' },
-      ],
-      actionLabel: 'Ready for your final review and submission',
-    },
-  },
-];
 
 export function Walkthrough() {
   const [activeStep, setActiveStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Auto-advance walkthrough when playing
+  const stages: WalkthroughStage[] = [
+    {
+      step: 1,
+      id: 'import',
+      title: 'Import Resume',
+      tagline: 'Client-side WASM parsing directly in memory',
+      description:
+        'Drop your PDF or DOCX file. WebAssembly text extractors parse work experience, education, projects, and skills directly inside your browser tab. Zero binary files are ever transmitted to external servers.',
+      icon: FileUp,
+      pillBadge: 'LOCAL_FILE_STREAM',
+      telemetry: {
+        runtime: 'WASM PDF Worker',
+        target: 'Memory Buffer',
+        latency: '34ms',
+        status: 'Extracted Offline',
+      },
+      mockInterface: (
+        <div className="space-y-4">
+          <div className="p-6 rounded-2xl border-2 border-dashed border-emerald-500/40 bg-emerald-950/10 flex flex-col items-center justify-center text-center">
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-3">
+              <FileUp className="w-6 h-6 animate-bounce" />
+            </div>
+            <div className="text-sm font-bold text-white mb-1">
+              Sarah_Chen_Staff_Engineer_2026.pdf
+            </div>
+            <div className="text-xs font-mono text-emerald-400">142 KB • PDF 1.7 Spec</div>
+            <div className="mt-3 px-3 py-1 rounded-full bg-emerald-900/40 border border-emerald-700/50 text-[11px] font-mono text-emerald-300">
+              WebAssembly Text Parser Active
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 text-xs font-mono space-y-1.5 text-slate-300">
+            <div className="text-slate-500 text-[10px] uppercase">Extraction Output Stream</div>
+            <div className="text-emerald-400">✓ Parsed 3 employment records (FinScale, CloudCore, HyperDev)</div>
+            <div className="text-emerald-400">✓ Extracted 14 technical keywords (Go, TS, Kubernetes, Kafka)</div>
+            <div className="text-emerald-400">✓ Identified 3 verified URLs (GitHub, LinkedIn, Personal Site)</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      step: 2,
+      id: 'extract',
+      title: 'Extract Profile',
+      tagline: 'Structured schema in chrome.storage.local',
+      description:
+        'The parsed attributes are normalized into a queryable, extensible JSON candidate schema. You can create multiple role variants (e.g., Staff Infrastructure vs. Lead Fullstack) and export or edit them at any time.',
+      icon: FileCode2,
+      pillBadge: 'CHROME_STORAGE_LOCAL',
+      telemetry: {
+        runtime: 'Local Storage Engine',
+        target: 'chrome.storage.local',
+        latency: '4ms',
+        status: 'Persisted Locally',
+      },
+      mockInterface: (
+        <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto space-y-2">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-800 text-[11px] text-slate-500">
+            <span>profile_variant: "infrastructure-lead"</span>
+            <span className="text-emerald-400">Schema Validated</span>
+          </div>
+          <pre className="text-slate-200 text-[11px] leading-relaxed">
+{`{
+  "candidate": "Sarah Chen",
+  "verified_roles": [
+    {
+      "company": "FinScale Systems",
+      "title": "Senior Infrastructure Architect",
+      "duration": "2023 - Present",
+      "highlights": ["Scaled Kafka to 120k events/sec", "Cut p99 latency 42%"]
+    }
+  ],
+  "saved_screening_answers": {
+    "work_auth_us": true,
+    "notice_period_weeks": 3
+  }
+}`}
+          </pre>
+        </div>
+      ),
+    },
+    {
+      step: 3,
+      id: 'detect',
+      title: 'Detect ATS Platform',
+      tagline: 'Heuristic DOM analysis & selector recognition',
+      description:
+        'When you navigate to any job board, ApplyPilot checks URL signatures and DOM container hierarchies to recognize Greenhouse, Lever, Ashby, or Workday forms without executing tracking scripts.',
+      icon: Scan,
+      pillBadge: 'DOM_SIGNATURE_PROBE',
+      telemetry: {
+        runtime: 'DOM Mutation Observer',
+        target: 'boards.greenhouse.io',
+        latency: '18ms',
+        status: 'Signatures Matched',
+      },
+      mockInterface: (
+        <div className="space-y-3 font-mono text-xs">
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-emerald-500/40 text-emerald-300">
+            <div className="flex items-center justify-between text-[11px] mb-1">
+              <span className="text-slate-400">Target URL</span>
+              <span className="text-emerald-400">Pattern #04 (Greenhouse)</span>
+            </div>
+            <div className="text-white text-xs truncate">https://boards.greenhouse.io/acme/jobs/48201</div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-[11px]">
+            <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
+              <div className="text-slate-500 text-[10px]">Inputs Identified</div>
+              <div className="text-white font-bold text-sm mt-0.5">14 Target Fields</div>
+            </div>
+            <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
+              <div className="text-slate-500 text-[10px]">DOM Framework</div>
+              <div className="text-emerald-400 font-bold text-sm mt-0.5">React 18 SSR</div>
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400">
+            Mapped selectors: <code className="text-slate-200">#first_name, #last_name, #email, #phone, #urls_linkedin</code>
+          </div>
+        </div>
+      ),
+    },
+    {
+      step: 4,
+      id: 'populate',
+      title: 'Populate Fields',
+      tagline: 'Synthetic event injection with native change triggers',
+      description:
+        'ApplyPilot injects your candidate values and dispatches synthetic input, change, and blur events so reactive frontend frameworks (React, Vue, Angular) register state updates automatically.',
+      icon: Zap,
+      pillBadge: 'SYNTHETIC_EVENT_DISPATCH',
+      telemetry: {
+        runtime: 'Event Dispatcher',
+        target: 'Active Tab Window',
+        latency: '62ms',
+        status: 'Populated 14/14',
+      },
+      mockInterface: (
+        <div className="space-y-2.5 text-xs font-mono">
+          <div className="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30 text-emerald-200 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              #applicant_name
+            </span>
+            <span className="text-[11px] text-slate-400 font-sans">"Sarah Chen"</span>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30 text-emerald-200 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              #applicant_email
+            </span>
+            <span className="text-[11px] text-slate-400 font-sans">"sarah.chen@example.dev"</span>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-500/30 text-emerald-200 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              #work_auth_status
+            </span>
+            <span className="text-[11px] text-slate-400 font-sans">"US Citizen (No Visa Needed)"</span>
+          </div>
+
+          <div className="p-2 rounded bg-slate-900 border border-slate-800 text-[10px] text-slate-400">
+            Event Log: <span className="text-emerald-400">element.dispatchEvent(new Event('input', &#123; bubbles: true &#125;))</span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      step: 5,
+      id: 'generate',
+      title: 'Generate AI Answers',
+      tagline: 'Fact-grounded tailoring with zero external leaks',
+      description:
+        'For open-ended screening questions, ApplyPilot prompts your local Ollama daemon or Gemini API using only your verified history. No hallucinated qualifications or irrelevant fluff.',
+      icon: Bot,
+      pillBadge: 'AI_GROUNDED_INFERENCE',
+      telemetry: {
+        runtime: 'Ollama localhost:11434',
+        target: 'mistral:latest',
+        latency: '1.2s',
+        status: 'Generated 64 tokens',
+      },
+      mockInterface: (
+        <div className="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/40 space-y-2.5">
+          <div className="flex items-center justify-between text-[11px] font-mono text-cyan-400">
+            <span className="flex items-center gap-1.5">
+              <Bot className="w-3.5 h-3.5" /> Ollama Local Inference
+            </span>
+            <span>mistral:latest</span>
+          </div>
+
+          <div className="text-xs text-slate-400 font-medium">
+            Prompt: "Why are you interested in our high-scale distributed systems team?"
+          </div>
+
+          <div className="p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-200 leading-relaxed font-sans">
+            <StreamingText
+              text="In my previous role at FinScale, I scaled real-time message streams to 120k events/sec. Your technical challenges around multi-region partition tolerance align directly with my hands-on background."
+              speed={16}
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      step: 6,
+      id: 'review',
+      title: 'Review & Submit',
+      tagline: 'Human in the loop at every single step',
+      description:
+        'ApplyPilot strictly forbids auto-submission bots. You review all pre-filled fields, inspect drafted screening answers, attach your resume PDF, solve any CAPTCHAs, and click submit yourself.',
+      icon: UserCheck,
+      pillBadge: 'HUMAN_CONFIRMATION_GATE',
+      telemetry: {
+        runtime: 'Candidate Review Gate',
+        target: 'Submit Action',
+        latency: 'Awaiting User',
+        status: 'Manual Only',
+      },
+      mockInterface: (
+        <div className="p-5 rounded-xl bg-slate-900/90 border border-emerald-500/40 text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+            <UserCheck className="w-6 h-6" />
+          </div>
+
+          <div>
+            <h4 className="text-base font-bold text-white mb-1">Human Verification Checkpoint</h4>
+            <p className="text-xs text-slate-400 max-w-sm mx-auto">
+              All 14 fields populated. You retain 100% control to review, edit, and click "Submit Application" when satisfied.
+            </p>
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-mono">
+            <Check className="w-4 h-4 text-emerald-400" /> Ready for Candidate Review
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  // Auto-advance
   useEffect(() => {
     if (!isPlaying) return;
-    const timer = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % STEPS.length);
-    }, 4500);
-    return () => clearInterval(timer);
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % stages.length);
+    }, 5000);
+    return () => clearInterval(interval);
   }, [isPlaying]);
 
-  const current = STEPS[activeStep];
-  const StepIcon = current.icon;
+  const currentStage = stages[activeStep];
+  const StepIcon = currentStage.icon;
 
   return (
-    <section id="walkthrough" className="py-20 sm:py-28 bg-[#090a0f] relative overflow-hidden">
+    <section id="walkthrough" className="py-24 sm:py-32 bg-[#090b10] border-t border-slate-800/80 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeader
-          badge="CONCEPTUAL USER JOURNEY"
+          badge="INTERACTIVE PRODUCT WALKTHROUGH"
           badgeIcon={<Layers className="w-3.5 h-3.5" />}
-          title="How ApplyPilot Accelerates Every Application"
-          subtitle="An illustrative step-by-step walkthrough of the planned extension workflow. From local resume parsing to human-controlled submission."
+          title="From Local Resume to Application Submission"
+          subtitle="Explore the 6-stage lifecycle engineered into ApplyPilot. An illustrative conceptual simulation of client-side resume intelligence."
         />
 
-        {/* Step Navigation Pills */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
-          {STEPS.map((s, idx) => {
-            const Icon = s.icon;
-            const isActive = activeStep === idx;
-            return (
-              <button
-                key={s.id}
-                onClick={() => {
-                  setActiveStep(idx);
-                  setIsPlaying(false);
-                }}
-                className={`flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-md shadow-emerald-950/40'
-                    : 'bg-slate-900/60 text-slate-400 border border-slate-800 hover:text-slate-200 hover:border-slate-700'
-                }`}
-              >
-                <div
-                  className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-mono ${
-                    isActive ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'
-                  }`}
-                >
-                  {s.step}
-                </div>
-                <span className="hidden sm:inline">{s.title}</span>
-                <span className="sm:hidden">{s.title.split(' ')[0]}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Interactive Walkthrough Card */}
-        <div className="max-w-5xl mx-auto rounded-2xl border border-slate-800 bg-[#0c0e14] shadow-2xl overflow-hidden">
-          {/* Top Progress & Playback Bar */}
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-slate-900/70 border-b border-slate-800 text-xs">
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-emerald-400 font-semibold">
-                STEP {current.step} OF {STEPS.length}
+        {/* Step Progress Bar & Controls */}
+        <div className="max-w-5xl mx-auto mb-10">
+          <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-slate-950/80 border border-slate-800/90 backdrop-blur-md mb-6">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-emerald-400">
+                STAGE {currentStage.step} OF {stages.length}:
               </span>
-              <span className="text-slate-600">/</span>
-              <span className="text-slate-400 font-mono text-[11px] uppercase tracking-wide">
-                {current.techBadge}
+              <span className="text-xs font-mono text-slate-300 uppercase">
+                {currentStage.pillBadge}
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition-colors cursor-pointer"
-                aria-label={isPlaying ? 'Pause walkthrough autoplay' : 'Play walkthrough autoplay'}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-mono border border-slate-800 transition-colors cursor-pointer"
               >
                 {isPlaying ? (
                   <>
-                    <Pause className="w-3 h-3 text-amber-400" />
+                    <Pause className="w-3.5 h-3.5 text-amber-400" />
                     <span>Pause</span>
                   </>
                 ) : (
                   <>
-                    <Play className="w-3 h-3 text-emerald-400" />
+                    <Play className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Auto-advance</span>
                   </>
                 )}
@@ -264,20 +341,20 @@ export function Walkthrough() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => {
-                    setActiveStep((prev) => (prev > 0 ? prev - 1 : STEPS.length - 1));
+                    setActiveStep((prev) => (prev > 0 ? prev - 1 : stages.length - 1));
                     setIsPlaying(false);
                   }}
-                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800"
                   aria-label="Previous step"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => {
-                    setActiveStep((prev) => (prev + 1) % STEPS.length);
+                    setActiveStep((prev) => (prev + 1) % stages.length);
                     setIsPlaying(false);
                   }}
-                  className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800"
                   aria-label="Next step"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -286,122 +363,112 @@ export function Walkthrough() {
             </div>
           </div>
 
-          {/* Progress Indicator line */}
-          <div className="w-full bg-slate-900 h-1">
-            <div
-              className="bg-emerald-500 h-1 transition-all duration-500 ease-out"
-              style={{ width: `${((current.step) / STEPS.length) * 100}%` }}
-            />
-          </div>
+          {/* Step Pill Selectors */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+            {stages.map((st, idx) => {
+              const Icon = st.icon;
+              const isActive = activeStep === idx;
 
-          {/* Main Step Content Area */}
-          <div className="p-6 sm:p-8 lg:p-10">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={current.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.35 }}
-                className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
-              >
-                {/* Left Description */}
-                <div className="lg:col-span-5 space-y-5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                      <StepIcon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider block">
-                        Phase 1 Simulation
-                      </span>
-                      <h3 className="text-xl sm:text-2xl font-bold text-white">{current.title}</h3>
-                    </div>
-                  </div>
-
-                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                    {current.fullDesc}
-                  </p>
-
-                  <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 space-y-2">
-                    <div className="font-semibold text-slate-200 flex items-center gap-1.5">
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      Key Guarantee:
-                    </div>
-                    <p className="text-slate-300 leading-normal">
-                      {current.step === 1 && 'Files never touch any external server; parsed directly in local WASM memory.'}
-                      {current.step === 2 && 'Structured JSON candidate data resides strictly in your browser.'}
-                      {current.step === 3 && 'Form detection runs non-destructively without modifying ATS submission logic.'}
-                      {current.step === 4 && 'Fires standard DOM change events to support React, Angular, and Vue forms.'}
-                      {current.step === 5 && 'Context is bound strictly to factual employment records to prevent hallucinations.'}
-                      {current.step === 6 && 'No programmatic click handler exists for submission buttons. You stay in control.'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right Interactive Simulator Box */}
-                <div className="lg:col-span-7 rounded-xl border border-slate-800 bg-slate-950 p-5 shadow-inner">
-                  {/* Card Header */}
-                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-xs font-mono font-medium text-slate-200">
-                        {current.previewTitle}
-                      </span>
-                    </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                      {current.previewContent.statusBadge}
+              return (
+                <button
+                  key={st.id}
+                  onClick={() => {
+                    setActiveStep(idx);
+                    setIsPlaying(false);
+                  }}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-slate-900 border-emerald-500/50 shadow-md shadow-emerald-950/30 ring-1 ring-emerald-500/30'
+                      : 'bg-slate-950/60 border-slate-800/80 hover:border-slate-700 text-slate-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span
+                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
+                        isActive
+                          ? 'bg-emerald-500 text-slate-950 font-bold'
+                          : 'bg-slate-800 text-slate-400'
+                      }`}
+                    >
+                      0{st.step}
                     </span>
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
                   </div>
-
-                  {/* Detail Rows */}
-                  <div className="space-y-3 mb-4 text-xs font-mono">
-                    {current.previewContent.details.map((detail, idx) => (
-                      <div
-                        key={idx}
-                        className={`p-2.5 rounded-lg border transition-all ${
-                          detail.isHighlight
-                            ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200'
-                            : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
-                        }`}
-                      >
-                        <div className="text-[10px] text-slate-500 mb-0.5">{detail.label}</div>
-                        <div className="font-sans text-xs sm:text-sm font-medium text-slate-200">
-                          {detail.value}
-                        </div>
-                      </div>
-                    ))}
+                  <div
+                    className={`text-xs font-bold truncate ${
+                      isActive ? 'text-white' : 'text-slate-300'
+                    }`}
+                  >
+                    {st.title}
                   </div>
-
-                  {/* Code snippet if present */}
-                  {current.previewContent.codePreview && (
-                    <div className="p-3 rounded-lg bg-black/60 border border-slate-800 text-[11px] font-mono text-emerald-300 overflow-x-auto mb-3">
-                      <pre>{current.previewContent.codePreview}</pre>
-                    </div>
-                  )}
-
-                  {/* Footer Action Label */}
-                  {current.previewContent.actionLabel && (
-                    <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
-                      <span className="text-slate-400 font-mono text-[11px]">
-                        {current.previewContent.actionLabel}
-                      </span>
-                      <span className="text-emerald-400 font-bold flex items-center gap-1 text-[11px]">
-                        Verified <Check className="w-3.5 h-3.5" />
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            </AnimatePresence>
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          {/* Bottom disclaimer */}
-          <div className="px-6 py-3 bg-slate-900/40 border-t border-slate-800/80 flex items-center gap-2 text-[11px] text-slate-400">
-            <ShieldAlert className="w-3.5 h-3.5 text-cyan-400" />
-            <span>
-              Illustrative walkthrough demonstrating the planned extension workflow. The website itself does not upload or process your files.
+        {/* Stage Presentation Split Deck */}
+        <div className="max-w-5xl mx-auto rounded-3xl border border-slate-800 bg-[#0c0f17] p-6 sm:p-8 lg:p-10 shadow-2xl relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStage.id}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -14 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+            >
+              {/* Left Column: Narrative & Technical Guarantees */}
+              <div className="lg:col-span-6 space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shadow-inner">
+                    <StepIcon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider block">
+                      Stage 0{currentStage.step} Pipeline
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+                      {currentStage.title}
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="text-xs font-mono text-slate-400 uppercase tracking-wide">
+                  {currentStage.tagline}
+                </div>
+
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  {currentStage.description}
+                </p>
+
+                {/* Telemetry Matrix */}
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80 text-xs font-mono">
+                  <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span className="text-[10px] text-slate-500 block">Runtime Target</span>
+                    <span className="text-slate-200">{currentStage.telemetry.target}</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span className="text-[10px] text-slate-500 block">Execution Latency</span>
+                    <span className="text-emerald-400">{currentStage.telemetry.latency}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Live Mockup Interface */}
+              <div className="lg:col-span-6 rounded-2xl border border-slate-800 bg-[#090b10] p-5 shadow-inner">
+                {currentStage.mockInterface}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Bottom Disclaimers */}
+          <div className="mt-8 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-mono">
+            <span className="flex items-center gap-2">
+              <ShieldAlert className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Illustrative product demonstration of planned Phase 2 extension workflows</span>
             </span>
+            <span className="hidden sm:inline text-slate-500">Zero Cloud Uploads</span>
           </div>
         </div>
       </div>
