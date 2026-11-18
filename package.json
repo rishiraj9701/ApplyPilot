@@ -4,7 +4,13 @@
   "description": "ApplyPilot — Free, open-source, local-first browser extension for job application automation",
   "scripts": {
     "dev": "npm --prefix apps/website run dev",
+    "dev:website": "npm --prefix apps/website run dev",
+    "dev:extension": "npm --prefix apps/extension run dev",
     "build": "npm --prefix apps/website run build",
+    "build:website": "npm --prefix apps/website run build",
+    "build:extension": "npm --prefix apps/extension run build",
+    "test": "npm --prefix apps/extension test",
+    "test:extension": "npm --prefix apps/extension test",
     "preview": "npm --prefix apps/website run preview"
   },
   "keywords": [
