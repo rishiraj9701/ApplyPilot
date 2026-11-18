@@ -54,7 +54,7 @@ apps/extension/
 │   │   └── messaging/         # Type-safe Chrome runtime messaging contracts
 │   └── styles/
 │       └── globals.css        # Dark architectural theme
-├── tests/                     # Comprehensive Vitest test suite (23 unit tests)
+├── tests/                     # Comprehensive Vitest test suite (35 unit tests)
 │   ├── resume.test.ts
 │   ├── ats.test.ts
 │   ├── autofill.test.ts
@@ -127,12 +127,13 @@ This outputs the compiled extension to `apps/extension/.output/chrome-mv3/`.
 | `tabs` | Identifies candidate ATS application pages and renders detection state in the popup. |
 
 ### Host Permissions
-ApplyPilot requests host permissions strictly for supported ATS job application portals:
+ApplyPilot requests host permissions strictly for supported ATS job application portals and user-configured AI endpoints:
 - `*://*.greenhouse.io/*`
-- `*://*.lever.co/*`
+- `*://jobs.lever.co/*`
 - `*://*.ashbyhq.com/*`
 - `*://*.myworkdayjobs.com/*`
-- `*://*/*` (Required for generic fallback detection across custom company job boards).
+- `http://localhost:11434/*` and `http://127.0.0.1:11434/*` (Local Ollama daemon)
+- `https://generativelanguage.googleapis.com/*` (Google Gemini API when configured)
 
 ---
 

@@ -42,7 +42,7 @@ ApplyPilot is implemented as a Chrome Manifest V3 (MV3) extension built using [W
 │   │  - Candidate Profiles (multi-variant)                   │   │
 │   │  - Application Ledger & Duplicate Tracker               │   │
 │   │  - Saved Q&A Vault                                      │   │
-│   │  - User Preferences & Encrypted AI Config               │   │
+│   │  - User Preferences & AI Configuration (Plaintext)      │   │
 │   └─────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
 ```

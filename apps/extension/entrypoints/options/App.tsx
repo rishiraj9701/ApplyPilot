@@ -1053,7 +1053,7 @@ export default function OptionsDashboard() {
                 ))
             ) : (
               <div className="py-12 text-center text-slate-500 text-xs font-mono">
-                No applications logged yet. Applications filled via extension are automatically recorded here.
+                No applications recorded yet. After reviewing and submitting on an ATS portal, record it via the extension popup or log it here.
               </div>
             )}
           </div>

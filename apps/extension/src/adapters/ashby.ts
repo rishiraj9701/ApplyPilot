@@ -38,12 +38,18 @@ export class AshbyAdapter implements ATSAdapter {
       const required = el.hasAttribute('required') || el.getAttribute('aria-required') === 'true';
 
       let labelText = '';
-      const parentLabel = el.closest('label');
-      if (parentLabel) labelText = parentLabel.textContent || '';
+      if (el.id) {
+        const forLabel = doc.querySelector(`label[for="${el.id}"]`);
+        if (forLabel) labelText = forLabel.textContent || '';
+      }
       if (!labelText) {
-        const container = el.closest('div');
-        const prev = container?.parentElement?.querySelector('label');
-        if (prev) labelText = prev.textContent || '';
+        const parentLabel = el.closest('label');
+        if (parentLabel) labelText = parentLabel.textContent || '';
+      }
+      if (!labelText) {
+        const container = el.closest('div, .field, [class*="Field"]');
+        const l = container?.querySelector('label');
+        if (l) labelText = l.textContent || '';
       }
       if (!labelText) labelText = placeholder || name;
 
@@ -53,10 +59,7 @@ export class AshbyAdapter implements ATSAdapter {
       let semanticRole: ApplicationField['semanticRole'] = 'unknown';
       let confidence = 0.5;
 
-      if (combined.includes('name') && !combined.includes('company')) {
-        semanticRole = 'fullName';
-        confidence = 0.9;
-      } else if (combined.includes('email')) {
+      if (combined.includes('email')) {
         semanticRole = 'email';
         confidence = 0.98;
       } else if (combined.includes('phone')) {
@@ -70,6 +73,9 @@ export class AshbyAdapter implements ATSAdapter {
         confidence = 0.95;
       } else if (combined.includes('website') || combined.includes('portfolio')) {
         semanticRole = 'website';
+        confidence = 0.9;
+      } else if (combined.includes('name') && !combined.includes('company')) {
+        semanticRole = 'fullName';
         confidence = 0.9;
       } else if (el instanceof HTMLTextAreaElement || combined.includes('question')) {
         semanticRole = 'screeningQuestion';

@@ -48,21 +48,25 @@ export interface ATSAdapter {
   fillField(field: ApplicationField, value: string, overwrite: boolean): Promise<boolean>;
 }
 
-// Utility to dispatch events that work on React, Vue, Angular, and vanilla DOM
+// Utility to dispatch events that work reliably across React, Vue, Angular, and vanilla DOM
 export function setNativeValue(element: HTMLElement, value: string): void {
-  const valueSetter = Object.getOwnPropertyDescriptor(
-    element instanceof HTMLTextAreaElement
-      ? HTMLTextAreaElement.prototype
-      : HTMLInputElement.prototype,
-    'value'
-  )?.set;
+  let prototypeSetter: ((v: any) => void) | undefined;
 
-  if (valueSetter) {
-    valueSetter.call(element, value);
+  if (element instanceof HTMLSelectElement) {
+    prototypeSetter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set;
+  } else if (element instanceof HTMLTextAreaElement) {
+    prototypeSetter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')?.set;
+  } else if (element instanceof HTMLInputElement) {
+    prototypeSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+  }
+
+  if (prototypeSetter) {
+    prototypeSetter.call(element, value);
   } else if ('value' in element) {
     (element as any).value = value;
   }
 
+  // Dispatch standard synthetic lifecycle events for reactive framework bindings
   element.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
   element.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
   element.dispatchEvent(new Event('blur', { bubbles: true, cancelable: true }));

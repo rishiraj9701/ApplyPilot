@@ -6,11 +6,11 @@ ApplyPilot is a free, open-source, local-first browser extension and marketing p
 
 ## Core Philosophy
 
-- **Local-First & Private**: Resumes, candidate profiles, saved screening answers, and application tracking histories remain strictly within your browser's local sandbox (`chrome.storage.local`). Zero remote databases, zero tracking beacons, and zero telemetry.
+- **Local-First & Private**: Resumes, candidate profiles, saved screening answers, and application tracking histories remain strictly within your browser's local sandbox (`chrome.storage.local`). Zero remote databases, zero tracking beacons, and zero telemetry. (Note: `chrome.storage.local` is plaintext local storage segregated by browser profile, not encrypted at rest).
 - **Deterministic ATS Autofill**: Purpose-built Document Object Model (DOM) adapters tailored for major Applicant Tracking Systems (Greenhouse, Lever, Ashby, Workday, and generic job boards).
 - **Modern Framework Compatibility**: Uses synthetic native prototype setters to reliably update state across React 16+, Vue, and Angular application portals without values being wiped upon submission.
-- **Human-in-the-Loop**: ApplyPilot **never** submits an application automatically. It populates fields for visual audit and preserves existing non-empty inputs by default.
-- **Optional AI Integrations**: Operates 100% offline with zero external network access. For open-ended screening questions, candidates can connect a local **Ollama** instance (100% offline, zero egress) or provide their own **Google Gemini** API key (BYOK).
+- **Human-in-the-Loop**: ApplyPilot **never** submits an application automatically. It populates fields for visual audit and preserves existing non-empty inputs by default. Autofilling does NOT log an application as submitted—candidates review and record submissions explicitly.
+- **Optional AI Integrations**: Operates completely offline with zero network requests when AI is disabled. For open-ended screening questions, candidates can connect local **Ollama** (`http://localhost:11434`, zero WAN egress) or provide their own **Google Gemini** API key (direct external HTTPS to Google API).
 - **Prompt Injection Defense**: Untrusted job descriptions are quarantined inside explicit boundary delimiters with strict anti-hallucination directives preventing the invention of unlisted skills, employers, or dates.
 
 ---
@@ -119,15 +119,15 @@ To run the compiled extension in your browser:
 
 ---
 
-## Supported ATS Platforms
+## Supported ATS Platforms & Testing Status
 
-| Platform | Status | Targeted DOM Selectors |
-| :--- | :--- | :--- |
-| **Greenhouse** | Verified & Tested | `#application_form`, `#first_name`, `#last_name`, `#email`, `#phone`, `#job_application_answers_attributes_*` |
-| **Lever** | Verified & Tested | `.application-form`, `input[name="name"]`, `email`, `phone`, `org`, `urls[*]` |
-| **Ashby** | Verified & Tested | `jobs.ashbyhq.com`, `[data-ashby-*]`, React-controlled input wrappers |
-| **Workday** | Verified & Tested | `*.myworkdayjobs.com`, `[data-automation-id="..."]` across wizard steps |
-| **Generic Fallback** | Verified & Tested | Heuristic analysis across `autocomplete`, labels, aria-labels, and placeholders |
+| Platform | DOM Fixture Tests | Live Site Testing | Targeted DOM Selectors |
+| :--- | :--- | :--- | :--- |
+| **Greenhouse** | **PASS** (Unit & Fixture) | **NOT TESTED** | `#application_form`, `#first_name`, `#last_name`, `#email`, `#phone`, `#job_application_answers_attributes_*` |
+| **Lever** | **PASS** (Unit & Fixture) | **NOT TESTED** | `.application-form`, `input[name="name"]`, `email`, `phone`, `org`, `urls[*]` |
+| **Ashby** | **PASS** (Unit & Fixture) | **NOT TESTED** | `jobs.ashbyhq.com`, `[data-ashby-*]`, React-controlled input wrappers |
+| **Workday** | **PASS** (Unit & Fixture) | **NOT TESTED** | `*.myworkdayjobs.com`, `[data-automation-id="..."]` across wizard steps |
+| **Generic Fallback** | **PASS** (Unit & Fixture) | **NOT TESTED** | Heuristic analysis across `autocomplete`, labels, aria-labels, and placeholders |
 
 ---
 
@@ -144,7 +144,8 @@ Detailed architectural specifications and engineering guides are available in th
 ## Current Status & Verification
 
 - **Phase 1 (Marketing Website)**: **COMPLETED**. Fully responsive, motion-rich editorial website with interactive simulators and zero TypeScript errors.
-- **Phase 2 (Browser Extension)**: **COMPLETED**. Full Manifest V3 extension with PDF resume parser, ATS adapters, non-destructive autofill engine, Ollama/Gemini integration, application tracking ledger, saved Q&A vault, and 23/23 passing unit tests.
+- **Phase 2 (Browser Extension)**: **COMPLETED**. Full Manifest V3 extension with PDF resume parser, ATS adapters, non-destructive autofill engine, Ollama/Gemini integration, application tracking ledger, saved Q&A vault.
+- **Phase 2.1 (Technical Audit & Hardening)**: **COMPLETED**. 35 / 35 unit & fixture tests passing. Addressed MV3 CSP compliance (removed remote CDN worker), hardened host permissions, added network timeouts, removed automatic application submission marking, prevented candidate data fabrication, and corrected documentation accuracy.
 
 ---
 

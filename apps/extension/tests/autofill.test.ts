@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
 import { AutofillService } from '../src/services/autofill/autofillService';
-import { GreenhouseAdapter } from '../src/adapters';
+import { GreenhouseAdapter, setNativeValue } from '../src/adapters';
 import { CandidateProfile } from '../src/core/schema';
 
 const mockProfile: CandidateProfile = {
@@ -93,5 +93,26 @@ describe('AutofillService', () => {
     expect(result.filled).toBe(1);
     const fnInput = document.getElementById('first_name') as HTMLInputElement;
     expect(fnInput.value).toBe('Jane');
+  });
+
+  it('updates HTMLSelectElement and dispatches change events using prototype setter', () => {
+    document.body.innerHTML = `
+      <select id="country">
+        <option value="">Select country</option>
+        <option value="US">United States</option>
+        <option value="CA">Canada</option>
+      </select>
+    `;
+
+    const select = document.getElementById('country') as HTMLSelectElement;
+    let changeDispatched = false;
+    select.addEventListener('change', () => {
+      changeDispatched = true;
+    });
+
+    setNativeValue(select, 'US');
+
+    expect(select.value).toBe('US');
+    expect(changeDispatched).toBe(true);
   });
 });

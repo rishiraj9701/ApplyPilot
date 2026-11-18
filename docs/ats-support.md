@@ -4,15 +4,17 @@ This document details the Applicant Tracking System (ATS) adapters supported by 
 
 ---
 
-## 1. Supported Platform Matrix
+## 1. Supported Platform Matrix & Validation Status
 
-| Platform | Primary Detection Marker | Field Selectors Targeted | Framework Handling | Support Level |
+| Platform | Primary Detection Marker | Field Selectors Targeted | Framework Handling | Validation Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Greenhouse** | `#application_form`, `boards.greenhouse.io`, `grnh.se` | Explicit IDs (`#first_name`, `#last_name`, `#email`, `#phone`, `#job_application_answers_attributes_*`) | Standard DOM & Dynamic JQuery | Tier 1 (Full) |
-| **Lever** | `.application-form`, `jobs.lever.co` | Semantic `input[name="..."]` attributes (`name`, `email`, `phone`, `org`, `urls[LinkedIn]`) | Single-page vanilla/React DOM | Tier 1 (Full) |
-| **Ashby** | `jobs.ashbyhq.com`, `ashbyhq.com`, `[data-ashby-*]` | React-controlled custom inputs, labeled field groups | React Synthetic Event dispatching | Tier 1 (Full) |
-| **Workday** | `*.myworkdayjobs.com`, `[data-automation-id]` | Explicit `[data-automation-id="..."]` markers across candidate wizard | React/Angular enterprise tree | Tier 1 (Full) |
-| **Generic Fallback**| Any URL with `<form>` containing job/application markers | Heuristic matching via `autocomplete`, `aria-label`, placeholder, and labels | Universal native prototype dispatch | Tier 2 (Heuristic) |
+| **Greenhouse** | `#application_form`, `boards.greenhouse.io`, `grnh.se` | Explicit IDs (`#first_name`, `#last_name`, `#email`, `#phone`, `#job_application_answers_attributes_*`) | Standard DOM & Dynamic JQuery | Unit-Tested: **PASS** <br> Live-Site: **NOT TESTED** |
+| **Lever** | `.application-form`, `jobs.lever.co` | Semantic `input[name="..."]` attributes (`name`, `email`, `phone`, `org`, `urls[LinkedIn]`) | Single-page vanilla/React DOM | Unit-Tested: **PASS** <br> Live-Site: **NOT TESTED** |
+| **Ashby** | `jobs.ashbyhq.com`, `ashbyhq.com`, `[data-ashby-*]` | React-controlled custom inputs, labeled field groups | React Synthetic Event dispatching | Unit-Tested: **PASS** <br> Live-Site: **NOT TESTED** |
+| **Workday** | `*.myworkdayjobs.com`, `[data-automation-id]` | Explicit `[data-automation-id="..."]` markers across candidate wizard | React/Angular enterprise tree | Unit-Tested: **PASS** <br> Live-Site: **NOT TESTED** |
+| **Generic Fallback**| Any URL with `<form>` containing job/application markers | Heuristic matching via `autocomplete`, `aria-label`, placeholder, and labels | Universal native prototype dispatch | Unit-Tested: **PASS** <br> Live-Site: **NOT TESTED** |
+
+> **Important Real-World Limitation**: Live enterprise career sites vary widely. Some embed forms inside cross-origin `<iframe>` wrappers, enforce Cloudflare Turnstile/CAPTCHAs, or require company account logins before revealing forms. These edge cases cannot be autofilled by content scripts without direct user interaction. ApplyPilot does not claim universal live ATS coverage.
 
 ---
 

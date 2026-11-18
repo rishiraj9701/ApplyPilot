@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 export const PersonalDetailsSchema = z.object({
-  fullName: z.string().min(1, 'Full name is required'),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  email: z.string().email('Invalid email address'),
+  fullName: z.string().default('Candidate'),
+  firstName: z.string().optional().default(''),
+  lastName: z.string().optional().default(''),
+  email: z.string().email('Invalid email address').or(z.literal('')).default(''),
   phone: z.string().optional().default(''),
   location: z.string().optional().default(''),
   website: z.string().url().optional().or(z.literal('')).default(''),

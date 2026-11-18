@@ -80,4 +80,77 @@ describe('ResumeExtractor', () => {
     expect(profile.certifications.length).toBe(1);
     expect(profile.certifications[0].name).toContain('Certified Kubernetes Administrator');
   });
+
+  it('handles resume with missing optional fields without fabricating data', () => {
+    const minimalResume = `
+      David Kim
+      
+      Technical Skills
+      Python, Django, PostgreSQL
+    `;
+
+    const profile = ResumeExtractor.extractFromText(minimalResume, 'Minimal Resume');
+    expect(profile.personal.fullName).toBe('David Kim');
+    expect(profile.personal.email).toBe(''); // Never fabricate candidate@example.com!
+    expect(profile.personal.phone).toBe('');
+    expect(profile.personal.location).toBe('');
+    expect(profile.personal.website).toBe('');
+    expect(profile.skills).toContain('Python');
+    expect(profile.experience.length).toBe(0);
+    expect(profile.education.length).toBe(0);
+  });
+
+  it('handles empty or scanned resume text gracefully', () => {
+    const emptyText = '   \n\n  \t  ';
+    const profile = ResumeExtractor.extractFromText(emptyText, 'Scanned Resume');
+
+    expect(profile.personal.fullName).toBe('Candidate');
+    expect(profile.personal.email).toBe('');
+    expect(profile.skills.length).toBe(0);
+    expect(profile.experience.length).toBe(0);
+  });
+
+  it('handles unusual section ordering (Education before Experience)', () => {
+    const invertedResume = `
+      Elena Rostova
+      elena.rostova@example.com
+
+      Education
+      Massachusetts Institute of Technology
+      Master of Science in Artificial Intelligence
+      2021 - 2023
+
+      Skills
+      PyTorch, CUDA, Python, C++
+
+      Work Experience
+      OpenRobotics | AI Research Fellow
+      Jan 2023 - Present
+      • Developed visual navigation models.
+    `;
+
+    const profile = ResumeExtractor.extractFromText(invertedResume);
+    expect(profile.personal.fullName).toBe('Elena Rostova');
+    expect(profile.personal.email).toBe('elena.rostova@example.com');
+    expect(profile.education.length).toBe(1);
+    expect(profile.education[0].institution).toContain('Massachusetts Institute of Technology');
+    expect(profile.experience.length).toBe(1);
+    expect(profile.experience[0].company).toContain('OpenRobotics');
+    expect(profile.skills).toContain('PyTorch');
+  });
+
+  it('picks first email and phone when multiple exist', () => {
+    const multiContact = `
+      Marcus Vance
+      marcus.work@example.com • marcus.personal@gmail.com
+      (555) 123-4567 / (555) 987-6543
+      
+      Skills
+      JavaScript
+    `;
+
+    const profile = ResumeExtractor.extractFromText(multiContact);
+    expect(profile.personal.email).toBe('marcus.work@example.com');
+    expect(profile.personal.phone).toBe('(555) 123-4567');
+  });
 });

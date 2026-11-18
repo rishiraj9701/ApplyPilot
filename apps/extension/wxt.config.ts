@@ -14,6 +14,9 @@ export default defineConfig({
       '*://jobs.lever.co/*',
       '*://*.ashbyhq.com/*',
       '*://*.myworkdayjobs.com/*',
+      'http://localhost:11434/*',
+      'http://127.0.0.1:11434/*',
+      'https://generativelanguage.googleapis.com/*',
     ],
     action: {
       default_title: 'ApplyPilot',

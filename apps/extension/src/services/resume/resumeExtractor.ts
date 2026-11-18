@@ -50,10 +50,10 @@ export class ResumeExtractor {
       createdAt: now,
       updatedAt: now,
       personal: {
-        fullName: fullName || 'Candidate Name',
+        fullName: fullName || 'Candidate',
         firstName,
         lastName,
-        email: email || 'candidate@example.com',
+        email: email || '',
         phone,
         location: this.extractLocation(text) || '',
         website: links.website || '',

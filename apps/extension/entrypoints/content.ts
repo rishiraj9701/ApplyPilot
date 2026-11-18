@@ -11,8 +11,14 @@ export default defineContentScript({
     const adapter = resolveATSAdapter(document, currentUrl);
 
     // Message listener for popup & background
-    chrome.runtime.onMessage.addListener((message: ExtensionMessage, _sender, sendResponse) => {
-      if (message.type === 'GET_PAGE_STATUS') {
+    chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
+      if (!message || typeof message !== 'object' || !('type' in message)) {
+        return false;
+      }
+
+      const msg = message as ExtensionMessage;
+
+      if (msg.type === 'GET_PAGE_STATUS') {
         try {
           const jobDetails = adapter.extractJobDetails(document, currentUrl);
           const fields = adapter.getApplicationFields(document);
@@ -35,12 +41,17 @@ export default defineContentScript({
         return true;
       }
 
-      if (message.type === 'EXECUTE_AUTOFILL') {
+      if (msg.type === 'EXECUTE_AUTOFILL') {
+        if (!msg.payload?.profile) {
+          sendResponse({ success: false, error: 'No profile provided in payload' });
+          return false;
+        }
+
         AutofillService.executeAutofill(
           adapter,
           document,
-          message.payload.profile,
-          message.payload.overwrite
+          msg.payload.profile,
+          msg.payload.overwrite
         )
           .then((result) => {
             showInlineToast(`Autofilled ${result.filled} fields (${result.skipped} skipped)`);
@@ -53,14 +64,19 @@ export default defineContentScript({
         return true;
       }
 
-      if (message.type === 'INSERT_ANSWER_TO_FIELD') {
+      if (msg.type === 'INSERT_ANSWER_TO_FIELD') {
+        if (!msg.payload?.answer) {
+          sendResponse({ success: false, error: 'No answer provided in payload' });
+          return false;
+        }
+
         try {
-          const target = document.getElementById(message.payload.fieldId) ||
-            document.querySelector(`[name="${message.payload.fieldId}"]`) ||
+          const target = document.getElementById(msg.payload.fieldId) ||
+            document.querySelector(`[name="${msg.payload.fieldId}"]`) ||
             document.querySelector('textarea');
 
           if (target && target instanceof HTMLElement) {
-            setNativeValue(target, message.payload.answer);
+            setNativeValue(target, msg.payload.answer);
             showInlineToast('AI answer inserted into field');
             sendResponse({ success: true });
           } else {

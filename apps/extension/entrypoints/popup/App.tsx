@@ -13,6 +13,7 @@ import {
   FileText,
   Clock,
   RotateCw,
+  BookmarkCheck,
 } from 'lucide-react';
 import { StorageService } from '../../src/services/storage/storageService';
 import { CandidateProfile, ApplicationRecord } from '../../src/core/schema';
@@ -33,6 +34,8 @@ export default function Popup() {
   const [duplicateWarning, setDuplicateWarning] = useState<ApplicationRecord | null>(null);
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [fillResult, setFillResult] = useState<FillResult | null>(null);
+  const [isRecorded, setIsRecorded] = useState(false);
+  const [recordSuccess, setRecordSuccess] = useState<string | null>(null);
   const [activeTabId, setActiveTabId] = useState<number | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -131,23 +134,7 @@ export default function Popup() {
 
       if (response?.success && response.result) {
         setFillResult(response.result);
-
-        // Record or update application history
-        if (pageStatus?.jobDetails) {
-          await StorageService.saveApplication({
-            id: `app_${Date.now()}`,
-            company: pageStatus.jobDetails.company,
-            jobTitle: pageStatus.jobDetails.title,
-            jobUrl: pageStatus.jobDetails.url,
-            location: pageStatus.jobDetails.location || '',
-            appliedAt: new Date().toISOString(),
-            resumeProfileId: activeProfile.id,
-            resumeProfileName: activeProfile.name,
-            atsPlatform: pageStatus.atsPlatform,
-            status: 'applied',
-            matchScore: matchResult?.overallScore,
-          });
-        }
+        setIsRecorded(false);
       } else {
         setErrorMsg(response?.error || 'Autofill did not complete.');
       }
@@ -155,6 +142,30 @@ export default function Popup() {
       setErrorMsg(err?.message || 'Failed communicating with target tab.');
     } finally {
       setIsAutofilling(false);
+    }
+  }
+
+  async function handleRecordApplication() {
+    if (!activeProfile || !pageStatus?.jobDetails) return;
+    try {
+      await StorageService.saveApplication({
+        id: `app_${Date.now()}`,
+        company: pageStatus.jobDetails.company,
+        jobTitle: pageStatus.jobDetails.title,
+        jobUrl: pageStatus.jobDetails.url,
+        location: pageStatus.jobDetails.location || '',
+        appliedAt: new Date().toISOString(),
+        resumeProfileId: activeProfile.id,
+        resumeProfileName: activeProfile.name,
+        atsPlatform: pageStatus.atsPlatform,
+        status: 'applied',
+        matchScore: matchResult?.overallScore,
+      });
+      setIsRecorded(true);
+      setRecordSuccess('Application logged to ledger!');
+      setTimeout(() => setRecordSuccess(null), 3000);
+    } catch (err: any) {
+      setErrorMsg(err?.message || 'Failed to save application');
     }
   }
 
@@ -291,14 +302,38 @@ export default function Popup() {
 
       {/* Fill Result Summary */}
       {fillResult && (
-        <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-emerald-300 space-y-1">
+        <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 text-emerald-300 space-y-2">
           <div className="font-bold text-[11px] flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            Autofill Success
+            Autofill Completed
           </div>
           <div className="text-[10px] text-slate-300 font-mono">
             {fillResult.filled} fields filled • {fillResult.skipped} skipped
           </div>
+          <p className="text-[10px] text-slate-400">
+            Please review all inputs on the page before submitting manually.
+          </p>
+
+          {!isRecorded ? (
+            <button
+              onClick={handleRecordApplication}
+              className="w-full py-1.5 px-2.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 font-semibold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <BookmarkCheck className="w-3.5 h-3.5" />
+              <span>I Have Submitted — Save to Ledger</span>
+            </button>
+          ) : (
+            <div className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3" />
+              Recorded in application ledger
+            </div>
+          )}
+
+          {recordSuccess && (
+            <div className="text-[10px] text-emerald-300 font-mono text-center">
+              {recordSuccess}
+            </div>
+          )}
         </div>
       )}
 

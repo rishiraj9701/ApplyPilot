@@ -1,15 +1,8 @@
 import * as pdfjsLib from 'pdfjs-dist';
 
-// Configure worker if in browser
-if (typeof window !== 'undefined') {
-  try {
-    // In Chromium extension or browser, use unpkg / cdnjs or inline worker if local asset not mapped
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
-  } catch {
-    // Fallback gracefully
-  }
-}
+// In Chrome Manifest V3, remote script URLs violate Content Security Policy.
+// We intentionally do not load remote CDN workers, allowing PDF.js to safely
+// process PDF streams in-thread in compliance with Chrome MV3 security policies.
 
 export interface ExtractedPage {
   pageNumber: number;

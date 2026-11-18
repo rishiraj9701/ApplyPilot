@@ -103,4 +103,31 @@ describe('StorageService', () => {
     expect(restoredProfiles.length).toBe(1);
     expect(restoredProfiles[0].personal.fullName).toBe('Alex Morgan');
   });
+
+  it('updates application status and deletes application records cleanly', async () => {
+    await StorageService.saveApplication({
+      id: 'app_test_crud',
+      company: 'Datadog',
+      jobTitle: 'Site Reliability Engineer',
+      jobUrl: 'https://careers.datadog.com/sre',
+      appliedAt: new Date().toISOString(),
+      resumeProfileId: 'prof_1',
+      resumeProfileName: 'SRE Profile',
+      atsPlatform: 'Greenhouse',
+      status: 'applied',
+    });
+
+    let apps = await StorageService.getApplications();
+    expect(apps.length).toBe(1);
+    expect(apps[0].status).toBe('applied');
+
+    await StorageService.updateApplicationStatus('app_test_crud', 'interview', 'Phone screen scheduled');
+    apps = await StorageService.getApplications();
+    expect(apps[0].status).toBe('interview');
+    expect(apps[0].notes).toBe('Phone screen scheduled');
+
+    await StorageService.deleteApplication('app_test_crud');
+    apps = await StorageService.getApplications();
+    expect(apps.length).toBe(0);
+  });
 });

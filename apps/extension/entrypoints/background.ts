@@ -19,13 +19,21 @@ export default defineBackground(() => {
   });
 
   // Central message dispatcher
-  chrome.runtime.onMessage.addListener((message: ExtensionMessage, _sender, sendResponse) => {
-    if (message.type === 'PING') {
+  chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
+    // Runtime message validation
+    if (!message || typeof message !== 'object' || !('type' in message)) {
+      sendResponse({ ok: false, error: 'Malformed message received' });
+      return false;
+    }
+
+    const msg = message as ExtensionMessage;
+
+    if (msg.type === 'PING') {
       sendResponse({ status: 'pong' });
       return true;
     }
 
-    if (message.type === 'TEST_AI_CONNECTION') {
+    if (msg.type === 'TEST_AI_CONNECTION') {
       StorageService.getAISettings()
         .then((settings) => {
           const provider = createAIProvider(settings);
@@ -41,14 +49,19 @@ export default defineBackground(() => {
       return true; // async reply
     }
 
-    if (message.type === 'GENERATE_AI_ANSWER') {
+    if (msg.type === 'GENERATE_AI_ANSWER') {
+      if (!msg.payload || typeof msg.payload !== 'object' || !msg.payload.question || !msg.payload.profile) {
+        sendResponse({ success: false, error: 'Invalid payload for GENERATE_AI_ANSWER' });
+        return false;
+      }
+
       StorageService.getAISettings()
         .then((settings) => {
           const provider = createAIProvider(settings);
           if (!provider) {
             throw new Error('AI provider is not configured. Please select Ollama or Gemini in Settings.');
           }
-          return provider.generateAnswer(message.payload);
+          return provider.generateAnswer(msg.payload);
         })
         .then((result) => sendResponse({ success: true, result }))
         .catch((err) => sendResponse({ success: false, error: err?.message || 'AI generation failed' }));
