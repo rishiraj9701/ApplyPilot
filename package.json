@@ -1,0 +1,18 @@
+{
+  "name": "applypilot-workspace",
+  "private": true,
+  "description": "ApplyPilot — Free, open-source, local-first browser extension for job application automation",
+  "scripts": {
+    "dev": "npm --prefix apps/website run dev",
+    "build": "npm --prefix apps/website run build",
+    "preview": "npm --prefix apps/website run preview"
+  },
+  "keywords": [
+    "job-applications",
+    "ats-autofill",
+    "local-first",
+    "browser-extension",
+    "open-source"
+  ],
+  "license": "MIT"
+}
