@@ -1,0 +1,33 @@
+{
+  "name": "@applypilot/extension",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "compile": "tsc --noEmit",
+    "test": "vitest run",
+    "zip": "wxt zip"
+  },
+  "dependencies": {
+    "lucide-react": "^1.16.0",
+    "motion": "^12.4.7",
+    "pdfjs-dist": "^4.10.38",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.9",
+    "@types/chrome": "^0.0.308",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@wxt-dev/module-react": "^1.2.2",
+    "jsdom": "^31.0.1",
+    "tailwindcss": "^4.0.9",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.7",
+    "wxt": "^0.21.5"
+  }
+}

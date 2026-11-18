@@ -1,7 +1,10 @@
 node_modules
 dist
+.output
+.wxt
 .env
 .env.local
 *.log
 .DS_Store
 Thumbs.db
+

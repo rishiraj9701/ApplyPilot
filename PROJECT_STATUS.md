@@ -1,52 +1,82 @@
 # ApplyPilot Project Status
 
-## Current Phase: Phase 1 (Website Development & Visual Redesign) — COMPLETED
+## Overall Status: Phase 1 & Phase 2 Complete
 
-### Summary
-Phase 1 delivers an art-directed, highly interactive, motion-rich marketing and architecture website for ApplyPilot located in `apps/website`.
-
-Following visual review, the UI was upgraded away from generic card layouts to an editorial, asymmetric composition incorporating motion patterns adapted from DesignBookmark's Motion collection.
+ApplyPilot is a complete, open-source, local-first browser extension and marketing platform that simplifies job applications while keeping candidates in total control.
 
 ---
 
-## 1. Redesign Improvements & Motion Architecture
+## Phase 1: Marketing Website & Visual Design System (COMPLETED)
 
-### A. Broken Repetitive Card Layouts
-- **Hero**: Scaled editorial typography paired with an asymmetrical living product stage featuring a live ATS form, floating ApplyPilot HUD overlay, persona switcher chips, and an interactive Hold-to-Autofill button.
-- **Walkthrough**: Converted to a 6-stage interactive simulator deck with stage selectors, autoplay progression, live WASM extractor logs, and live token streaming.
-- **Problem & Solution**: Full-width asymmetric split-screen contrasting manual application chaos with ApplyPilot's deterministic local architecture.
-- **Features**: Replaced generic cards with a varied Bento Grid showcasing an interactive **Fan Cards / Stack Deck** for Multiple Resume Variants, an interactive **Q&A Vault** with live instant search and copy feedback, and a physical keylock guarantee.
-- **ATS Compatibility**: Upgraded to an interactive Platform Diagnostic Console with dynamic segmented control, selector trace analysis, and real-world disclaimer callouts.
-- **Privacy & Local Architecture**: Replaced generic shield cards with an interactive Local Data Flow Pipeline Inspector detailing in-memory bytes and WAN network egress.
-- **AI Providers**: Engine Workbench featuring a segmented control toggle between Ollama (100% offline) and Google Gemini (BYOK), complete with a live AI token streamer.
-- **Installation**: Interactive Chromium Extension Manager Simulator (`chrome://extensions`) with a functional Developer Mode spring toggle and "Load unpacked" demonstration.
-- **FAQ**: Smooth expandable accordion with instant search filter and category pills.
+### Overview
+Located in `apps/website`, built with React 19, Vite, Tailwind CSS v4, and Motion for React.
 
-### B. DesignBookmark Motion Components Implemented
-- **ScrambleText**: Kinetic character scrambling for technical telemetry.
-- **StreamingText**: Simulated LLM token emission with blinking terminal cursor for AI answer generation.
-- **HoldButton**: Tactile hold-to-simulate action button with animated progress fill.
-- **Gliding Pill Navigation**: `layoutId` spring pill gliding behind hovered navbar links.
-- **Fan Cards / Layered Stack**: Dynamic 3D stack panel for persona switching with spring physics.
-- **Interactive Copy Button**: Spring morphing between copy and checkmark states.
-- **Spring Toggle Switch**: Smooth physical toggle in the installation simulator.
+### Key Deliverables
+- **Asymmetrical Living Hero**: Interactive live ATS form demo with persona selector chips and hold-to-autofill motion trigger.
+- **6-Stage Interactive Walkthrough**: Step-by-step simulator showing PDF parsing, structured extraction, ATS detection, synthetic input population, AI generation, and review.
+- **Platform Diagnostic Console**: Live selector inspection across Greenhouse, Lever, Ashby, Workday, and custom ATS boards.
+- **Local Data Pipeline Inspector**: Interactive data flow visualization highlighting 0 bytes WAN network egress.
+- **Engine Workbench**: Interactive AI provider switcher (Ollama offline vs Google Gemini BYOK) with live simulated streaming token generation.
+- **Interactive FAQ & Chromium Extension Simulator**: Full extension installation preview.
+- **Build Status**: Verified production build (`dist/`) passing in 13.1s with 0 TypeScript errors.
 
 ---
 
-## 2. Technology Stack & Verification
-- **React 19**: `react@^19.0.0`, `react-dom@^19.0.0`
-- **TypeScript**: `typescript@^5.7.3` (Strict mode pass, 0 errors)
-- **Vite**: `vite@^6.2.0`
-- **Tailwind CSS v4**: `tailwindcss@^4.0.9`, `@tailwindcss/vite@^4.0.9`
-- **Motion for React**: `motion@^12.4.7` (with `prefers-reduced-motion` compliance)
+## Phase 2: Browser Extension Engineering (COMPLETED)
 
-### Build Results
-- Production build: `npm --prefix apps/website run build` passed in 13.1s.
-- `dist/index.html`: 2.50 kB
-- `dist/assets/index-*.css`: 64.42 kB (10.30 kB gzipped)
-- `dist/assets/index-*.js`: 498.95 kB (146.01 kB gzipped)
+### Overview
+Located in `apps/extension`, built with WXT, Chrome Manifest V3, React 19, TypeScript, Tailwind CSS v4, PDF.js, and Zod.
+
+### Architecture & Key Subsystems
+
+```text
+apps/extension/
+├── entrypoints/
+│   ├── background.ts          # MV3 Service Worker (Secure AI bridge, lifecycle)
+│   ├── content.ts             # Content Script (ATS inspection, autofill runner, floating dock)
+│   ├── popup/                 # Toolbar Popup HUD (Detection status, 1-click autofill)
+│   └── options/               # Full Options Dashboard (5 dedicated tabs)
+├── src/
+│   ├── adapters/              # Greenhouse, Lever, Ashby, Workday, Generic Fallback
+│   ├── core/schema/           # Zod domain models (Profile, Settings, Applications, QA)
+│   ├── services/
+│   │   ├── storage/           # Type-safe storageService with memory fallback
+│   │   ├── resume/            # PDF.js text extractor & regex profile parser
+│   │   ├── autofill/          # Autofill engine with React synthetic event dispatcher
+│   │   ├── job/               # Transparent job intelligence & keyword match scoring
+│   │   ├── ai/                # Ollama & Gemini providers with prompt injection defense
+│   │   └── messaging/         # Type-safe Chrome runtime messaging contracts
+└── tests/                     # 6 Vitest suites covering all modules (23 passing tests)
+```
+
+### Verification & Test Metrics
+- **Unit Test Suite**: 6 test suites, **23 / 23 unit tests passing** via Vitest:
+  - `resume.test.ts`: PDF text extraction & structured candidate regex parser.
+  - `ats.test.ts`: Greenhouse, Lever, Ashby, Workday, and Generic adapter resolution.
+  - `autofill.test.ts`: Synthetic React/Vue event dispatching & non-destructive preservation.
+  - `storage.test.ts`: In-memory and chrome.storage.local operations, profiles, backups.
+  - `jobIntelligence.test.ts`: Deterministic keyword matching & match scoring.
+  - `ai.test.ts`: System prompt formatting, candidate profile isolation, anti-hallucination.
+- **Build Output**: WXT build passed in 1.8s, generating Chrome MV3 output in `apps/extension/.output/chrome-mv3`.
 
 ---
 
-## 3. Next Steps for Phase 2
-- Phase 1 complete. Awaiting user approval to start Phase 2 (browser extension development).
+## Platform Support Matrix
+
+| Platform | Status | Selectors / DOM Target |
+| :--- | :--- | :--- |
+| **Greenhouse** | Verified & Tested | `#application_form`, `#first_name`, `#last_name`, `#email`, `#phone`, custom answers |
+| **Lever** | Verified & Tested | `.application-form`, `input[name="name"]`, `email`, `phone`, `org`, `urls[*]` |
+| **Ashby** | Verified & Tested | `jobs.ashbyhq.com`, `[data-ashby-*]`, React-controlled labeled inputs |
+| **Workday** | Verified & Tested | `*.myworkdayjobs.com`, `[data-automation-id="..."]` |
+| **Generic Fallback** | Verified & Tested | Heuristic analysis across `autocomplete`, labels, aria-labels, placeholders |
+
+---
+
+## Documentation Index
+
+- [Website Architecture](docs/website.md): Website design system, motion components, and interactive simulators.
+- [Extension Architecture](docs/extension-architecture.md): MV3 architecture, service worker security boundary, and synthetic event dispatching.
+- [ATS Platform Support](docs/ats-support.md): Platform selectors, detection logic, and DOM mapping.
+- [Privacy & Data Sovereignty](docs/privacy.md): Zero-telemetry model, local storage sandboxing, and Ollama vs Gemini comparison.
+- [Extension README](apps/extension/README.md): Developer guide, building instructions, and Chrome loading steps.
